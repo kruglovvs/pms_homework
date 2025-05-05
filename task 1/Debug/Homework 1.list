@@ -1,0 +1,165 @@
+
+Homework 1.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000130  08000000  08000000  00001000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         000000b4  08000130  08000130  00001130  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000000  080001e4  080001ec  000011ec  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .ARM.extab    00000000  080001e4  080001e4  000011ec  2**0
+                  CONTENTS
+  4 .ARM          00000000  080001e4  080001e4  000011ec  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  080001e4  080001ec  000011ec  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  080001e4  080001e4  000011e4  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .fini_array   00000004  080001e8  080001e8  000011e8  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .data         00000000  20000000  20000000  000011ec  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .bss          0000001c  20000000  080001ec  00002000  2**2
+                  ALLOC
+ 10 ._user_heap_stack 00000604  2000001c  080001ec  0000201c  2**0
+                  ALLOC
+ 11 .ARM.attributes 00000029  00000000  00000000  000011ec  2**0
+                  CONTENTS, READONLY
+ 12 .debug_line   0000006f  00000000  00000000  00001215  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 13 .debug_line_str 00000066  00000000  00000000  00001284  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_info   00000030  00000000  00000000  000012ea  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_abbrev 00000024  00000000  00000000  0000131a  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_aranges 00000028  00000000  00000000  00001340  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_str    00000082  00000000  00000000  00001368  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_rnglists 00000019  00000000  00000000  000013ea  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000130 <__do_global_dtors_aux>:
+ 8000130:	b510      	push	{r4, lr}
+ 8000132:	4c05      	ldr	r4, [pc, #20]	@ (8000148 <__do_global_dtors_aux+0x18>)
+ 8000134:	7823      	ldrb	r3, [r4, #0]
+ 8000136:	b933      	cbnz	r3, 8000146 <__do_global_dtors_aux+0x16>
+ 8000138:	4b04      	ldr	r3, [pc, #16]	@ (800014c <__do_global_dtors_aux+0x1c>)
+ 800013a:	b113      	cbz	r3, 8000142 <__do_global_dtors_aux+0x12>
+ 800013c:	4804      	ldr	r0, [pc, #16]	@ (8000150 <__do_global_dtors_aux+0x20>)
+ 800013e:	f3af 8000 	nop.w
+ 8000142:	2301      	movs	r3, #1
+ 8000144:	7023      	strb	r3, [r4, #0]
+ 8000146:	bd10      	pop	{r4, pc}
+ 8000148:	20000000 	.word	0x20000000
+ 800014c:	00000000 	.word	0x00000000
+ 8000150:	080001cc 	.word	0x080001cc
+
+08000154 <frame_dummy>:
+ 8000154:	b508      	push	{r3, lr}
+ 8000156:	4b03      	ldr	r3, [pc, #12]	@ (8000164 <frame_dummy+0x10>)
+ 8000158:	b11b      	cbz	r3, 8000162 <frame_dummy+0xe>
+ 800015a:	4903      	ldr	r1, [pc, #12]	@ (8000168 <frame_dummy+0x14>)
+ 800015c:	4803      	ldr	r0, [pc, #12]	@ (800016c <frame_dummy+0x18>)
+ 800015e:	f3af 8000 	nop.w
+ 8000162:	bd08      	pop	{r3, pc}
+ 8000164:	00000000 	.word	0x00000000
+ 8000168:	20000004 	.word	0x20000004
+ 800016c:	080001cc 	.word	0x080001cc
+ 8000170:	080001ec 	.word	0x080001ec
+ 8000174:	20000000 	.word	0x20000000
+ 8000178:	20000000 	.word	0x20000000
+ 800017c:	20000000 	.word	0x20000000
+ 8000180:	2000001c 	.word	0x2000001c
+
+08000184 <Reset_Handler>:
+
+.section .text
+.global main
+
+Reset_Handler:
+	ldr  	r0, =_estack
+ 8000184:	480d      	ldr	r0, [pc, #52]	@ (80001bc <end_reverse+0x2>)
+  	mov  	sp, r0         				@ установить stack pointer
+ 8000186:	4685      	mov	sp, r0
+	bl		Main						@ Бесконечный цикл
+ 8000188:	f000 f802 	bl	8000190 <Main>
+	bl		Infinite_Loop				@ Бесконечный цикл
+ 800018c:	f000 f81c 	bl	80001c8 <ADC1_2_IRQHandler>
+
+08000190 <Main>:
+	
+Main:
+	LDR R0, =0x20000200 // Адрес начала массива
+ 8000190:	480b      	ldr	r0, [pc, #44]	@ (80001c0 <end_reverse+0x6>)
+	LDR R1, =0x20000200 + (64 * 3) // Адрес конца массива (64 * 3 байта)
+ 8000192:	490c      	ldr	r1, [pc, #48]	@ (80001c4 <end_reverse+0xa>)
+	SUB R1, R1, #3 // Указатель на последний 24-разрядный элемент
+ 8000194:	f1a1 0103 	sub.w	r1, r1, #3
+	MOV R2, #0 // Индекс
+ 8000198:	f04f 0200 	mov.w	r2, #0
+
+0800019c <reverse_loop>:
+reverse_loop:
+	CMP R2, #32 // Сравниваем индекс с половиной массива
+ 800019c:	2a20      	cmp	r2, #32
+	BGE end_reverse // Если индекс >= 32, выходим из цикла
+ 800019e:	da0c      	bge.n	80001ba <end_reverse>
+	// Обмен значениями
+	LDR R3, [R0, R2, LSL #2] // Загружаем элемент с индексом R2
+ 80001a0:	f850 3022 	ldr.w	r3, [r0, r2, lsl #2]
+	LDR R4, [R1, R2, LSL #2] // Загружаем элемент с конца массива
+ 80001a4:	f851 4022 	ldr.w	r4, [r1, r2, lsl #2]
+	STR R4, [R0, R2, LSL #2] // Сохраняем элемент с конца на место элемента с индексом R2
+ 80001a8:	f840 4022 	str.w	r4, [r0, r2, lsl #2]
+	STR R3, [R1, R2, LSL #2] // Сохраняем элемент с индекса R2 на место элемента с конца
+ 80001ac:	f841 3022 	str.w	r3, [r1, r2, lsl #2]
+	ADD R2, R2, #1 // Увеличиваем индекс
+ 80001b0:	f102 0201 	add.w	r2, r2, #1
+	SUB R1, R1, #3 // Сдвигаем указатель на 3 байта назад
+ 80001b4:	f1a1 0103 	sub.w	r1, r1, #3
+	B reverse_loop // Повторяем цикл
+ 80001b8:	e7f0      	b.n	800019c <reverse_loop>
+
+080001ba <end_reverse>:
+end_reverse:
+	// Завершение программы
+	BX LR // Возврат из main
+ 80001ba:	4770      	bx	lr
+	ldr  	r0, =_estack
+ 80001bc:	20005000 	.word	0x20005000
+	LDR R0, =0x20000200 // Адрес начала массива
+ 80001c0:	20000200 	.word	0x20000200
+	LDR R1, =0x20000200 + (64 * 3) // Адрес конца массива (64 * 3 байта)
+ 80001c4:	200002c0 	.word	0x200002c0
+
+080001c8 <ADC1_2_IRQHandler>:
+ * @retval : None
+*/
+  .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 80001c8:	e7fe      	b.n	80001c8 <ADC1_2_IRQHandler>
+	...
+
+080001cc <_init>:
+ 80001cc:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80001ce:	bf00      	nop
+ 80001d0:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80001d2:	bc08      	pop	{r3}
+ 80001d4:	469e      	mov	lr, r3
+ 80001d6:	4770      	bx	lr
+
+080001d8 <_fini>:
+ 80001d8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80001da:	bf00      	nop
+ 80001dc:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80001de:	bc08      	pop	{r3}
+ 80001e0:	469e      	mov	lr, r3
+ 80001e2:	4770      	bx	lr

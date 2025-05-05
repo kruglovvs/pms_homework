@@ -1,0 +1,222 @@
+
+Homework 1.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000130  08000000  08000000  00001000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         000000e0  08000130  08000130  00001130  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000000  08000210  08000218  00001218  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .ARM.extab    00000000  08000210  08000210  00001218  2**0
+                  CONTENTS
+  4 .ARM          00000000  08000210  08000210  00001218  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  08000210  08000218  00001218  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  08000210  08000210  00001210  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .fini_array   00000004  08000214  08000214  00001214  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .data         00000000  20000000  20000000  00001218  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .bss          0000001c  20000000  08000218  00002000  2**2
+                  ALLOC
+ 10 ._user_heap_stack 00000604  2000001c  08000218  0000201c  2**0
+                  ALLOC
+ 11 .ARM.attributes 00000029  00000000  00000000  00001218  2**0
+                  CONTENTS, READONLY
+ 12 .debug_line   0000008c  00000000  00000000  00001241  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 13 .debug_line_str 00000066  00000000  00000000  000012cd  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_info   00000030  00000000  00000000  00001333  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_abbrev 00000024  00000000  00000000  00001363  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_aranges 00000028  00000000  00000000  00001388  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_str    00000082  00000000  00000000  000013b0  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_rnglists 0000001a  00000000  00000000  00001432  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000130 <__do_global_dtors_aux>:
+ 8000130:	b510      	push	{r4, lr}
+ 8000132:	4c05      	ldr	r4, [pc, #20]	@ (8000148 <__do_global_dtors_aux+0x18>)
+ 8000134:	7823      	ldrb	r3, [r4, #0]
+ 8000136:	b933      	cbnz	r3, 8000146 <__do_global_dtors_aux+0x16>
+ 8000138:	4b04      	ldr	r3, [pc, #16]	@ (800014c <__do_global_dtors_aux+0x1c>)
+ 800013a:	b113      	cbz	r3, 8000142 <__do_global_dtors_aux+0x12>
+ 800013c:	4804      	ldr	r0, [pc, #16]	@ (8000150 <__do_global_dtors_aux+0x20>)
+ 800013e:	f3af 8000 	nop.w
+ 8000142:	2301      	movs	r3, #1
+ 8000144:	7023      	strb	r3, [r4, #0]
+ 8000146:	bd10      	pop	{r4, pc}
+ 8000148:	20000000 	.word	0x20000000
+ 800014c:	00000000 	.word	0x00000000
+ 8000150:	080001f8 	.word	0x080001f8
+
+08000154 <frame_dummy>:
+ 8000154:	b508      	push	{r3, lr}
+ 8000156:	4b03      	ldr	r3, [pc, #12]	@ (8000164 <frame_dummy+0x10>)
+ 8000158:	b11b      	cbz	r3, 8000162 <frame_dummy+0xe>
+ 800015a:	4903      	ldr	r1, [pc, #12]	@ (8000168 <frame_dummy+0x14>)
+ 800015c:	4803      	ldr	r0, [pc, #12]	@ (800016c <frame_dummy+0x18>)
+ 800015e:	f3af 8000 	nop.w
+ 8000162:	bd08      	pop	{r3, pc}
+ 8000164:	00000000 	.word	0x00000000
+ 8000168:	20000004 	.word	0x20000004
+ 800016c:	080001f8 	.word	0x080001f8
+
+08000170 <Reset_Handler>:
+  .section .text.Reset_Handler
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+
+Reset_Handler:
+	ldr  	r0, =_estack
+ 8000170:	481d      	ldr	r0, [pc, #116]	@ (80001e8 <convert_end+0x12>)
+  	mov  	sp, r0         				@ установить stack pointer
+ 8000172:	4685      	mov	sp, r0
+	ldr		r0, =0x80000045				@ загрузить константу в регистр - число
+ 8000174:	481d      	ldr	r0, [pc, #116]	@ (80001ec <convert_end+0x16>)
+	ldr		r1, =0x20000000				@ загрузить константу в регистр - адрес
+ 8000176:	f04f 5100 	mov.w	r1, #536870912	@ 0x20000000
+	bl		convert						@ вызов функции преобразования
+ 800017a:	f000 f802 	bl	8000182 <convert>
+	bl		Infinite_Loop				@ Бесконечный цикл
+ 800017e:	f000 f839 	bl	80001f4 <ADC1_2_IRQHandler>
+
+08000182 <convert>:
+	
+convert:
+	push 	{lr}						@ сохраняем все регистры
+ 8000182:	b500      	push	{lr}
+	push 	{r0}
+ 8000184:	b401      	push	{r0}
+	push 	{r1}
+ 8000186:	b402      	push	{r1}
+	push 	{r2}
+ 8000188:	b404      	push	{r2}
+	push 	{r3}
+ 800018a:	b408      	push	{r3}
+	push 	{r4}
+ 800018c:	b410      	push	{r4}
+	mov 	r4, #0						@ регистр знака числа
+ 800018e:	f04f 0400 	mov.w	r4, #0
+	ldr 	r3, =0x7fffff				@ маска для убирания знака числа
+ 8000192:	4b17      	ldr	r3, [pc, #92]	@ (80001f0 <convert_end+0x1a>)
+	cmp 	r0, #0						@ сохранить знак r0
+ 8000194:	2800      	cmp	r0, #0
+	itt		lt
+ 8000196:	bfbc      	itt	lt
+	movlt 	r4, #1
+ 8000198:	2401      	movlt	r4, #1
+	andlt 	r0, r3						@ сделать r0 положительным числом
+ 800019a:	4018      	andlt	r0, r3
+
+0800019c <convert_get_digits>:
+convert_get_digits:						@ эта функция должна записать все цифры в стек, начиная с последней
+    mov 	r3, #0
+ 800019c:	f04f 0300 	mov.w	r3, #0
+    push 	{r3}						@ в конце добавить в стек '\0'
+ 80001a0:	b408      	push	{r3}
+
+080001a2 <convert_get_digits_while>:
+convert_get_digits_while:
+	mov 	r3, #10
+ 80001a2:	f04f 030a 	mov.w	r3, #10
+	udiv 	r2, r0, r3					@ r2 = r0 / 10
+ 80001a6:	fbb0 f2f3 	udiv	r2, r0, r3
+	mls 	r3, r3, r2, r0				@ r3 = r0 - (r2 * 10) - остаток от деления r0 / 10
+ 80001aa:	fb03 0312 	mls	r3, r3, r2, r0
+	add 	r3, #0x30					@ прибавить код символа '0'
+ 80001ae:	f103 0330 	add.w	r3, r3, #48	@ 0x30
+	mov 	r0, r2
+ 80001b2:	4610      	mov	r0, r2
+	push 	{r3}
+ 80001b4:	b408      	push	{r3}
+    teq 	r2, #0
+ 80001b6:	f092 0f00 	teq	r2, #0
+    bne		convert_get_digits_while
+ 80001ba:	d1f2      	bne.n	80001a2 <convert_get_digits_while>
+
+080001bc <convert_print_digits>:
+convert_print_digits:					@ эта функция считывает стек и пишет цифры по адрессу
+	mov 	r3, '-'
+ 80001bc:	f04f 032d 	mov.w	r3, #45	@ 0x2d
+	cmp 	r4, #0
+ 80001c0:	2c00      	cmp	r4, #0
+	itt 	hi
+ 80001c2:	bf84      	itt	hi
+	strhi	r3, [r1]
+ 80001c4:	600b      	strhi	r3, [r1, #0]
+	addhi 	r1, #1
+ 80001c6:	3101      	addhi	r1, #1
+
+080001c8 <convert_print_digits_while>:
+convert_print_digits_while:
+	pop		{r3}
+ 80001c8:	bc08      	pop	{r3}
+	strb	r3, [r1]
+ 80001ca:	700b      	strb	r3, [r1, #0]
+	add 	r1, #1
+ 80001cc:	f101 0101 	add.w	r1, r1, #1
+	teq		r3, #0
+ 80001d0:	f093 0f00 	teq	r3, #0
+	bne 	convert_print_digits_while
+ 80001d4:	d1f8      	bne.n	80001c8 <convert_print_digits_while>
+
+080001d6 <convert_end>:
+convert_end:
+	pop		{r4}
+ 80001d6:	bc10      	pop	{r4}
+	pop		{r3}
+ 80001d8:	bc08      	pop	{r3}
+	pop		{r2}
+ 80001da:	bc04      	pop	{r2}
+	pop		{r1}
+ 80001dc:	bc02      	pop	{r1}
+	pop		{r0}
+ 80001de:	bc01      	pop	{r0}
+	pop 	{lr}
+ 80001e0:	f85d eb04 	ldr.w	lr, [sp], #4
+	bx 		lr
+ 80001e4:	4770      	bx	lr
+ 80001e6:	0000      	.short	0x0000
+	ldr  	r0, =_estack
+ 80001e8:	20005000 	.word	0x20005000
+	ldr		r0, =0x80000045				@ загрузить константу в регистр - число
+ 80001ec:	80000045 	.word	0x80000045
+	ldr 	r3, =0x7fffff				@ маска для убирания знака числа
+ 80001f0:	007fffff 	.word	0x007fffff
+
+080001f4 <ADC1_2_IRQHandler>:
+ * @retval : None
+*/
+  .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 80001f4:	e7fe      	b.n	80001f4 <ADC1_2_IRQHandler>
+	...
+
+080001f8 <_init>:
+ 80001f8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80001fa:	bf00      	nop
+ 80001fc:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80001fe:	bc08      	pop	{r3}
+ 8000200:	469e      	mov	lr, r3
+ 8000202:	4770      	bx	lr
+
+08000204 <_fini>:
+ 8000204:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8000206:	bf00      	nop
+ 8000208:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 800020a:	bc08      	pop	{r3}
+ 800020c:	469e      	mov	lr, r3
+ 800020e:	4770      	bx	lr
